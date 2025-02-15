@@ -120,7 +120,7 @@ class _HomePageState extends State<HomePage> {
                   height: 64,
                   // 这里预留放置相机图标的位置
                   child: Image.asset(
-                    'assets/camera_icon.png', // 稍后替换为实际的图标路径
+                    'assets/camera.png', // 稍后替换为实际的图标路径
                     width: 64,
                     height: 64,
                   ),
@@ -129,7 +129,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         const Align(
           alignment: Alignment.centerLeft,
           child: Padding(
@@ -143,9 +143,11 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+        const SizedBox(height: 20),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 24), // 与上方框框保持一致的水平边距
             child: GridView.builder(
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2, // 每行两个
@@ -160,16 +162,13 @@ class _HomePageState extends State<HomePage> {
                   imageUrl: result.imagePath,
                   onImageTap: () => _openResultPage(context, result),
                   onDownload: () async {
-                    // 处理下载逻辑
                     logger.i('开始下载模型: ${result.modelPath}');
                     _downloadTaskModel(result);
                   },
                   onDelete: () {
-                    // 处理删除逻辑
                     setState(() {
                       _resultList.removeAt(index);
                     });
-                    // 这里可以添加持久化存储的逻辑
                   },
                 );
               },
