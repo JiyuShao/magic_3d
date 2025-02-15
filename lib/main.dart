@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:web_app/pages/home.dart';
+import 'package:web_app/pages/webview.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:web_app/utils/logger.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: '.env');
+  logger.i('ENVS: ${dotenv.env}');
   runApp(const MyApp());
 }
 
@@ -11,77 +16,63 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '多页面浏览器',
+      title: 'Magic 3D',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const HomePage(),
+      home: const AppContent(),
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class TabItem {
+  final String title;
 
-  @override
-  State<HomePage> createState() => _HomePageState();
+  final IconData icon;
+  final Widget body;
+
+  TabItem({required this.title, required this.icon, required this.body});
 }
 
-class _HomePageState extends State<HomePage> {
-  final List<TabInfo> _tabs = [
-    TabInfo('百度', 'https://www.baidu.com'),
-    TabInfo('谷歌', 'https://www.google.com'),
-    TabInfo('必应', 'https://www.bing.com'),
+class AppContent extends StatefulWidget {
+  const AppContent({super.key});
+
+  @override
+  State<AppContent> createState() => _AppContentState();
+}
+
+class _AppContentState extends State<AppContent> {
+  int _currentIndex = 0;
+
+  final List<TabItem> _tabs = [
+    TabItem(title: '首页', icon: Icons.home, body: const HomePage()),
+    TabItem(
+        title: '百度',
+        icon: Icons.web,
+        body: const WebViewPage(url: 'https://www.baidu.com', title: '百度')),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: _tabs.length,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('多页面浏览器'),
-          bottom: TabBar(
-            tabs: _tabs.map((tab) => Tab(text: tab.title)).toList(),
-          ),
-        ),
-        body: TabBarView(
-          children: _tabs.map((tab) => WebViewTab(url: tab.url)).toList(),
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_tabs[_currentIndex].title),
+      ),
+      body: _tabs[_currentIndex].body,
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+        items: _tabs
+            .map((tab) => BottomNavigationBarItem(
+                  icon: Icon(tab.icon),
+                  label: tab.title,
+                ))
+            .toList(),
       ),
     );
   }
 }
-
-class WebViewTab extends StatefulWidget {
-  final String url;
-
-  const WebViewTab({super.key, required this.url});
-
-  @override
-  State<WebViewTab> createState() => _WebViewTabState();
-}
-
-class _WebViewTabState extends State<WebViewTab> {
-  late final WebViewController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(Uri.parse(widget.url));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WebViewWidget(controller: controller);
-  }
-}
-
-class TabInfo {
-  final String title;
-  final String url;
-
-  TabInfo(this.title, this.url);
-} 
