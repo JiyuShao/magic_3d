@@ -63,10 +63,16 @@ class _AppContentState extends State<AppContent> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_tabs[_currentIndex].title),
+      // appBar: AppBar(
+      //   title: Text(_tabs[_currentIndex].title),
+      // ),
+      backgroundColor: const Color(0xFFF5F3FF),
+      body: SafeArea(
+        child: Container(
+          padding: const EdgeInsets.only(top: 20),
+          child: _tabs[_currentIndex].body,
+        ),
       ),
-      body: _tabs[_currentIndex].body,
       // bottomNavigationBar: BottomNavigationBar(
       //   currentIndex: _currentIndex,
       //   onTap: (index) {
