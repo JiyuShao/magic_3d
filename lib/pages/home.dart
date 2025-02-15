@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:web_app/pages/result.dart';
 import 'package:web_app/utils/logger.dart';
 import 'package:web_app/utils/request.dart';
+import 'package:web_app/components/list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -16,18 +17,68 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final List<Map<String, String>> gridItems = [
+    {
+      'title': '苹果设计指南',
+      'subtitle': '了解更多 iOS 设计规范和最佳实践',
+      'imageUrl': 'https://picsum.photos/seed/1/400/300', // 示例图片URL
+    },
+    {
+      'title': '材料设计 3.0',
+      'subtitle': '探索 Google Material Design 的最新更新',
+      'imageUrl': 'https://picsum.photos/seed/2/400/300',
+    },
+    {
+      'title': 'Flutter UI',
+      'subtitle': 'Flutter 界面设计精选',
+      'imageUrl': 'https://picsum.photos/seed/3/400/300',
+    },
+    {
+      'title': '交互设计',
+      'subtitle': '优秀的交互设计案例',
+      'imageUrl': 'https://picsum.photos/seed/4/400/300',
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      body: Column(
         children: [
+          const SizedBox(height: 20),
           const Text('欢迎来到首页'),
           ElevatedButton(
             onPressed: () {
               _showCamera(context);
             },
             child: const Text('点击调起摄像头'),
+          ),
+
+          // 网格布局
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // 每行两个
+                  crossAxisSpacing: 16, // 水平间距
+                  mainAxisSpacing: 16, // 垂直间距
+                  childAspectRatio: 0.8, // 控制卡片宽高比
+                ),
+                itemCount: gridItems.length,
+                itemBuilder: (context, index) {
+                  final item = gridItems[index];
+                  return CardGridItem(
+                    title: item['title']!,
+                    subtitle: item['subtitle'],
+                    imageUrl: item['imageUrl']!,
+                    onViewPressed: () {
+                      print('查看按钮被点击: ${item['title']}');
+                    },
+                  );
+                },
+              ),
+            ),
           ),
         ],
       ),
