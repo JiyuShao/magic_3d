@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_app/pages/result.dart';
 import 'package:web_app/utils/logger.dart';
 import 'package:web_app/utils/request.dart';
@@ -17,71 +18,63 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final List<Map<String, String>> gridItems = [
-    {
-      'title': '苹果设计指南',
-      'subtitle': '了解更多 iOS 设计规范和最佳实践',
-      'imageUrl': 'https://picsum.photos/seed/1/400/300', // 示例图片URL
-    },
-    {
-      'title': '材料设计 3.0',
-      'subtitle': '探索 Google Material Design 的最新更新',
-      'imageUrl': 'https://picsum.photos/seed/2/400/300',
-    },
-    {
-      'title': 'Flutter UI',
-      'subtitle': 'Flutter 界面设计精选',
-      'imageUrl': 'https://picsum.photos/seed/3/400/300',
-    },
-    {
-      'title': '交互设计',
-      'subtitle': '优秀的交互设计案例',
-      'imageUrl': 'https://picsum.photos/seed/4/400/300',
-    },
+  // ignore: prefer_final_fields
+  List<Result> _resultList = [
+    Result(
+      imagePath:
+          'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/rendered_image.webp?auth_key=1739664000-qaTCDmwd-0-3afea8374cdd656c00c00d48b9d9349b',
+      modelPath:
+          'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/tripo_pbr_model_e534e2f0-618d-44d7-afea-a541fdd1d01a.glb?auth_key=1739664000-qaTCDmwd-0-5e78ed534d85d51df2384865ed2c9e21',
+    )
   ];
 
   @override
+  void initState() async {
+    super.initState();
+    // 从本地获取 _resultList
+    // final prefs = await SharedPreferences.getInstance();
+    // _resultList = prefs
+    //         .getStringList('resultList')
+    //         ?.map((e) => Result.fromJson(e))
+    //         .toList() ??
+    //     [];
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          const SizedBox(height: 20),
-          const Text('欢迎来到首页'),
-          ElevatedButton(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('欢迎来到 Magic 3D'),
+        Container(
+          padding: const EdgeInsets.all(16.0),
+          child: ElevatedButton(
             onPressed: () {
               _showCamera(context);
             },
-            child: const Text('点击调起摄像头'),
+            child: const Text('上传图片'),
           ),
-
-          // 网格布局
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // 每行两个
-                  crossAxisSpacing: 16, // 水平间距
-                  mainAxisSpacing: 16, // 垂直间距
-                  childAspectRatio: 0.8, // 控制卡片宽高比
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: _resultList.length,
+            itemBuilder: (context, index) {
+              final result = _resultList[index];
+              return ListTile(
+                leading: Image.network(
+                  result.imagePath,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
                 ),
-                itemCount: gridItems.length,
-                itemBuilder: (context, index) {
-                  final item = gridItems[index];
-                  return CardGridItem(
-                    title: item['title']!,
-                    subtitle: item['subtitle'],
-                    imageUrl: item['imageUrl']!,
-                    onViewPressed: () {
-                      print('查看按钮被点击: ${item['title']}');
-                    },
-                  );
-                },
-              ),
-            ),
+                title: Text('图片 ${index + 1}'),
+                subtitle: Text('上传时间: ${DateTime.now().toString()}'),
+                onTap: () => _openResultPage(context, _resultList[index]),
+              );
+            },
           ),
-        ],
-      ),
+        )
+      ],
     );
   }
 
@@ -153,12 +146,24 @@ class _HomePageState extends State<HomePage> {
       modelPath: finalModelPath ?? '',
     );
     logger.i('上传成功: $finalResult');
+    // setState(() async {
+    //   _resultList.add(finalResult);
+    //   // 设置 _resultList 到本地
+    //   final prefs = await SharedPreferences.getInstance();
+    //   prefs.setStringList(
+    //       'resultList', _resultList.map((e) => e.toJson()).toList());
+    // });
 
+    // ignore: use_build_context_synchronously
+    _openResultPage(context, finalResult);
+  }
+
+  void _openResultPage(BuildContext context, Result result) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ResultPage(
-          result: finalResult,
+          result: result,
         ),
       ),
     );
