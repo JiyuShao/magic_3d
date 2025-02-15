@@ -137,12 +137,18 @@ class CardGridItem extends StatelessWidget {
               children: [
                 // 下载按钮
                 Expanded(
-                  child: TextButton.icon(
+                  child: TextButton(
                     onPressed: onDownload,
-                    icon: const Icon(Icons.download, size: 20),
-                    label: const Text('下载'),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.download, size: 18),
+                        SizedBox(width: 2),
+                        Text('下载'),
+                      ],
                     ),
                   ),
                 ),
@@ -154,12 +160,18 @@ class CardGridItem extends StatelessWidget {
                 ),
                 // 删除按钮
                 Expanded(
-                  child: TextButton.icon(
+                  child: TextButton(
                     onPressed: () => _showDeleteDialog(context),
-                    icon: const Icon(Icons.delete_outline, size: 20),
-                    label: const Text('删除'),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.red,
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete_outline, size: 18),
+                        SizedBox(width: 2),
+                        Text('删除'),
+                      ],
                     ),
                   ),
                 ),

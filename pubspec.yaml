@@ -36,3 +36,4 @@ flutter:
     - .env
     - assets/logo1.png
     - assets/logo2.png
+    - assets/camera.png
