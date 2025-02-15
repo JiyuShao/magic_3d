@@ -41,142 +41,145 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        // Logo 容器
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 24.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // 左侧 Logo
-              Container(
-                width: 100,
-                height: 100,
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/logo1.png',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.contain,
+    return Scaffold(
+      backgroundColor: const Color(0xFFF5F3FF),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Logo 容器
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 24.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 左侧 Logo
+                Container(
+                  width: 80,
+                  height: 80,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/logo1.png',
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-              ),
-              // 右侧 Logo
-              Container(
-                width: 100,
-                height: 100,
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/logo2.png',
-                    width: 100,
-                    height: 100,
-                    fit: BoxFit.contain,
+                // 右侧 Logo
+                Container(
+                  width: 80,
+                  height: 80,
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/logo2.png',
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.contain,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ), // 添加20px的间距
-        const Text(
-          'Magic 3D',
-          style: TextStyle(
-            fontSize: 48, // 加大字号
-            fontWeight: FontWeight.bold, // 加粗字体
-          ),
-        ),
-        const SizedBox(height: 20),
-        const Text(
-          '上传照片即可一键生成3D模型',
-          style: TextStyle(
-            wordSpacing: 5,
-            color: Color(0xFF666666),
-          ),
-        ),
-        const SizedBox(height: 20),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          height: 80,
-          decoration: BoxDecoration(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.grey[300]!,
-              width: 1,
+              ],
+            ),
+          ), // 添加20px的间距
+          const Text(
+            'Magic 3D',
+            style: TextStyle(
+              fontSize: 42, // 加大字号
+              fontWeight: FontWeight.bold, // 加粗字体
             ),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
+          const SizedBox(height: 10),
+          const Text(
+            '上传照片即可一键生成3D模型',
+            style: TextStyle(
+              wordSpacing: 10,
+              color: Color(0xFF666666),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 24),
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.transparent,
               borderRadius: BorderRadius.circular(12),
-              onTap: () => _showCamera(context),
-              child: Center(
-                child: Container(
-                  width: 64,
-                  height: 64,
-                  // 这里预留放置相机图标的位置
-                  child: Image.asset(
-                    'assets/camera.png', // 稍后替换为实际的图标路径
+              border: Border.all(
+                color: Colors.grey[300]!,
+                width: 1,
+              ),
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () => _showCamera(context),
+                child: Center(
+                  child: Container(
                     width: 64,
                     height: 64,
+                    // 这里预留放置相机图标的位置
+                    child: Image.asset(
+                      'assets/camera.png', // 稍后替换为实际的图标路径
+                      width: 64,
+                      height: 64,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-        const Align(
-          alignment: Alignment.centerLeft,
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24),
-            child: Text(
-              '我的模型',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+          const SizedBox(height: 20),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                '我的模型',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
-        ),
-        const SizedBox(height: 20),
-        Expanded(
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 24), // 与上方框框保持一致的水平边距
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 每行两个
-                crossAxisSpacing: 16, // 水平间距
-                mainAxisSpacing: 16, // 垂直间距
-                childAspectRatio: 0.8, // 控制卡片宽高比
+          const SizedBox(height: 20),
+          Expanded(
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 24), // 与上方框框保持一致的水平边距
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, // 每行两个
+                  crossAxisSpacing: 16, // 水平间距
+                  mainAxisSpacing: 16, // 垂直间距
+                  childAspectRatio: 0.8, // 控制卡片宽高比
+                ),
+                itemCount: _resultList.length,
+                itemBuilder: (context, index) {
+                  final result = _resultList[index];
+                  return CardGridItem(
+                    imageUrl: result.imagePath,
+                    onImageTap: () => _openResultPage(context, result),
+                    onDownload: () async {
+                      logger.i('开始下载模型: ${result.modelPath}');
+                      _downloadTaskModel(result);
+                    },
+                    onDelete: () {
+                      setState(() {
+                        _resultList.removeAt(index);
+                      });
+                    },
+                  );
+                },
               ),
-              itemCount: _resultList.length,
-              itemBuilder: (context, index) {
-                final result = _resultList[index];
-                return CardGridItem(
-                  imageUrl: result.imagePath,
-                  onImageTap: () => _openResultPage(context, result),
-                  onDownload: () async {
-                    logger.i('开始下载模型: ${result.modelPath}');
-                    _downloadTaskModel(result);
-                  },
-                  onDelete: () {
-                    setState(() {
-                      _resultList.removeAt(index);
-                    });
-                  },
-                );
-              },
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

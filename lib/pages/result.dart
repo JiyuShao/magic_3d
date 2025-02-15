@@ -34,7 +34,7 @@ class ResultPage extends StatelessWidget {
     logger.i('展示结果: $result');
     return Scaffold(
       appBar: AppBar(
-        title: const Text('生成结果'),
+        title: const Text('模型预览'),
       ),
       body: Center(
         child: ModelViewer(
