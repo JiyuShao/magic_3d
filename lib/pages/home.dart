@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -188,11 +189,14 @@ class _HomePageState extends State<HomePage> {
       if (image == null) {
         return;
       }
+      _showToast('上传图片中...');
       // 上传图片
       final imageToken = await upload(File(image.path));
       if (imageToken == null) {
+        _showToast('上传图片失败', timeInSecForIosWeb: 5);
         return;
       }
+      _showToast('创建任务中...');
       // 创建任务
       final taskIdResult = await request(
         'POST',
@@ -207,12 +211,15 @@ class _HomePageState extends State<HomePage> {
       );
 
       if (taskIdResult == null) {
+        _showToast('创建任务失败', timeInSecForIosWeb: 5);
         return;
       }
+      _showToast('轮训任务中...');
       final taskId = taskIdResult['task_id'];
       // 轮询任务状态
       final taskResult = await startTaskPolling(taskId);
       if (taskResult == null) {
+        _showToast('轮训任务失败', timeInSecForIosWeb: 5);
         return;
       }
       logger.i(taskResult);
@@ -260,6 +267,7 @@ class _HomePageState extends State<HomePage> {
       });
     });
 
+    _hideToast();
     // ignore: use_build_context_synchronously
     _openResultPage(context, finalResult);
   }
@@ -300,5 +308,22 @@ class _HomePageState extends State<HomePage> {
 
     // 打开文件
     await OpenFile.open(filePath);
+  }
+
+  void _showToast(String msg, {int timeInSecForIosWeb = 1000}) {
+    _hideToast();
+    Fluttertoast.showToast(
+      msg: msg,
+      gravity: ToastGravity.CENTER,
+      toastLength: Toast.LENGTH_SHORT,
+      timeInSecForIosWeb: timeInSecForIosWeb,
+      backgroundColor: Colors.blueAccent,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  void _hideToast() {
+    Fluttertoast.cancel();
   }
 }
