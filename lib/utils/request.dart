@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
-// import 'package:web_app/utils/upload_oss.dart';
 import 'package:web_app/utils/logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
@@ -138,22 +137,33 @@ Future<TaskResult> fetchTaskStatus(String taskId) async {
   }
 }
 
+Future<File?> downloadFile(String url) async {
+  try {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final appDir = await getApplicationDocumentsDirectory();
+      final fileName = url.split('/').last;
+      final file = File('${appDir.path}/$fileName');
+      await file.writeAsBytes(response.bodyBytes);
+      logger.i('模型下载完成: ${file.path}');
+      return file;
+    } else {
+      logger.e('下载失败: ${response.statusCode}');
+    }
+  } catch (e) {
+    logger.e('下载文件失败: $e');
+  }
+  return null;
+}
+
 Future<String?> downloadAndUploadToAliyun({
   required String url,
 }) async {
   try {
-    // 下载文件
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode != 200) {
-      throw Exception('Failed to download file');
+    final file = await downloadFile(url);
+    if (file == null) {
+      return null;
     }
-
-    // 保存文件到临时目录
-    final directory = await getTemporaryDirectory();
-    final fileName = url.split('/').last;
-    final file = File('${directory.path}/$fileName');
-    await file.writeAsBytes(response.bodyBytes);
-
     // 上传文件到阿里云
     final finalUrl = url;
     file.delete();

@@ -1,12 +1,16 @@
 // ignore_for_file: dead_code
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
+<<<<<<< HEAD
 import 'package:path_provider/path_provider.dart';
+=======
+>>>>>>> dfb29eed2ac316779aa4cc0fc7ff13cefa8d1f89
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_app/pages/result.dart';
 import 'package:web_app/utils/logger.dart';
@@ -21,26 +25,21 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // ignore: prefer_final_fields
-  List<Result> _resultList = [
-    Result(
-      imagePath:
-          'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/rendered_image.webp?auth_key=1739664000-qaTCDmwd-0-3afea8374cdd656c00c00d48b9d9349b',
-      modelPath:
-          'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/tripo_pbr_model_e534e2f0-618d-44d7-afea-a541fdd1d01a.glb?auth_key=1739664000-qaTCDmwd-0-5e78ed534d85d51df2384865ed2c9e21',
-    )
-  ];
+  List<Result> _resultList = [];
 
   @override
   void initState() {
     super.initState();
     // 从本地获取 _resultList
-    // final prefs = await SharedPreferences.getInstance();
-    // _resultList = prefs
-    //         .getStringList('resultList')
-    //         ?.map((e) => Result.fromJson(e))
-    //         .toList() ??
-    //     [];
+    SharedPreferences.getInstance().then((prefs) {
+      setState(() {
+        _resultList = prefs
+                .getStringList('resultList')
+                ?.map((e) => Result.fromJson(jsonDecode(e)))
+                .toList() ??
+            [];
+      });
+    });
   }
 
   @override
@@ -167,22 +166,7 @@ class _HomePageState extends State<HomePage> {
                   onDownload: () async {
                     // 处理下载逻辑
                     logger.i('开始下载模型: ${result.modelPath}');
-                    try {
-                      final response =
-                          await http.get(Uri.parse(result.modelPath));
-                      if (response.statusCode == 200) {
-                        final appDir = await getApplicationDocumentsDirectory();
-                        final fileName = result.modelPath.split('/').last;
-                        final file = File('${appDir.path}/$fileName');
-                        await file.writeAsBytes(response.bodyBytes);
-                        logger.i('模型下载完成: ${file.path}');
-                        OpenFile.open(file.path);
-                      } else {
-                        logger.e('下载失败: ${response.statusCode}');
-                      }
-                    } catch (e) {
-                      logger.e('下载出错: $e');
-                    }
+                    _downloadTaskModel(result);
                   },
                   onDelete: () {
                     // 处理删除逻辑
@@ -245,11 +229,13 @@ class _HomePageState extends State<HomePage> {
       // }
       // final modelFile = await download(modelUrl);
       result = Result(
+        id: taskId,
         imagePath: taskResult['output']['rendered_image'],
         modelPath: taskResult['output']['pbr_model'],
       );
     } else {
       result = Result(
+        id: '123',
         imagePath:
             'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/rendered_image.webp?auth_key=1739664000-qaTCDmwd-0-3afea8374cdd656c00c00d48b9d9349b',
         modelPath:
@@ -264,17 +250,20 @@ class _HomePageState extends State<HomePage> {
       url: result.modelPath,
     );
     final finalResult = Result(
+      id: result.id,
       imagePath: finalImagePath ?? '',
       modelPath: finalModelPath ?? '',
     );
     logger.i('上传成功: $finalResult');
-    // setState(() async {
-    //   _resultList.add(finalResult);
-    //   // 设置 _resultList 到本地
-    //   final prefs = await SharedPreferences.getInstance();
-    //   prefs.setStringList(
-    //       'resultList', _resultList.map((e) => e.toJson()).toList());
-    // });
+
+    setState(() {
+      _resultList.add(finalResult);
+      // 设置 _resultList 到本地
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setStringList('resultList',
+            _resultList.map((e) => jsonEncode(e.toJson())).toList());
+      });
+    });
 
     // ignore: use_build_context_synchronously
     _openResultPage(context, finalResult);
@@ -289,5 +278,32 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
+  }
+
+  void _downloadTaskModel(Result result) async {
+    String? filePath;
+    if (result.modelLocalPath != null) {
+      filePath = result.modelLocalPath;
+    } else {
+      final file = await downloadFile(result.modelPath);
+      if (file == null) {
+        return;
+      }
+      filePath = file.path;
+      logger.i('下载模型成功: ${file.path}');
+      setState(() {
+        // 更新 _resultList 的 modelLocalPath
+        _resultList.firstWhere((e) => e.id == result.id).modelLocalPath =
+            file.path;
+        // 设置 _resultList 到本地
+        SharedPreferences.getInstance().then((prefs) {
+          prefs.setStringList('resultList',
+              _resultList.map((e) => jsonEncode(e.toJson())).toList());
+        });
+      });
+    }
+
+    // 打开文件
+    await OpenFile.open(filePath);
   }
 }
