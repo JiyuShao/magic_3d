@@ -3,19 +3,18 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
+// import 'package:web_app/utils/upload_oss.dart';
 import 'package:web_app/utils/logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-String getApiKey() {
-  return dotenv.env['API_KEY'] ?? '';
-}
+import 'package:path_provider/path_provider.dart';
 
 Future<String?> upload(File image) async {
+  var apiKey = dotenv.env['TRIPO3D_API_KEY'] ?? '';
   var apiUrl = 'https://api.tripo3d.ai/v2/openapi/upload';
   try {
     // 创建 multipart 请求
     var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
-    request.headers['Authorization'] = 'Bearer ${getApiKey()}';
+    request.headers['Authorization'] = 'Bearer $apiKey';
 
     // 添加文件
     request.files.add(await http.MultipartFile.fromPath(
@@ -50,10 +49,11 @@ Future<String?> upload(File image) async {
 
 Future<Map<String, dynamic>?> request(String method, String url,
     {Map<String, dynamic>? body}) async {
+  final apiKey = dotenv.env['TRIPO3D_API_KEY'] ?? '';
   // 创建请求头
   Map<String, String> headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ${getApiKey()}',
+    'Authorization': 'Bearer $apiKey',
   };
   try {
     dynamic response;
@@ -136,4 +136,32 @@ Future<TaskResult> fetchTaskStatus(String taskId) async {
       message: '任务状态查询失败',
     );
   }
+}
+
+Future<String?> downloadAndUploadToAliyun({
+  required String url,
+}) async {
+  try {
+    // 下载文件
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode != 200) {
+      throw Exception('Failed to download file');
+    }
+
+    // 保存文件到临时目录
+    final directory = await getTemporaryDirectory();
+    final fileName = url.split('/').last;
+    final file = File('${directory.path}/$fileName');
+    await file.writeAsBytes(response.bodyBytes);
+
+    // 上传文件到阿里云
+    final finalUrl = url;
+    file.delete();
+    // final finalUrl = await UploadOss.upload(file);
+    logger.d('上传文件到阿里云成功: $finalUrl');
+    return finalUrl;
+  } catch (e) {
+    logger.e('上传文件到阿里云失败: $e');
+  }
+  return null;
 }
