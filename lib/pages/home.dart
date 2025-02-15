@@ -4,10 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_app/pages/result.dart';
 import 'package:web_app/utils/logger.dart';
@@ -116,7 +114,7 @@ class _HomePageState extends State<HomePage> {
               borderRadius: BorderRadius.circular(12),
               onTap: () => _showCamera(context),
               child: Center(
-                child: Container(
+                child: SizedBox(
                   width: 64,
                   height: 64,
                   // 这里预留放置相机图标的位置
@@ -183,7 +181,7 @@ class _HomePageState extends State<HomePage> {
 
   void _showCamera(BuildContext context) async {
     Result result;
-    if (false) {
+    if (true) {
       // 选择图片
       final picker = ImagePicker();
       final image = await picker.pickImage(source: ImageSource.camera);
