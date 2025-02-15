@@ -22,11 +22,15 @@ dependencies:
   crypto: ^3.0.6
   mime: ^2.0.0
   dio: ^5.8.0+1
+  shared_preferences: ^2.5.2
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  build_runner: ^2.4.15
+  json_serializable: ^6.9.4
 
 flutter:
   uses-material-design: true

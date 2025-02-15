@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:web_app/utils/logger.dart';
 
+@JsonSerializable()
 class Result {
   final String imagePath;
   final String modelPath;

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_app/pages/result.dart';
 import 'package:web_app/utils/logger.dart';
 import 'package:web_app/utils/request.dart';
@@ -16,21 +17,63 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // ignore: prefer_final_fields
+  List<Result> _resultList = [
+    Result(
+      imagePath:
+          'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/rendered_image.webp?auth_key=1739664000-qaTCDmwd-0-3afea8374cdd656c00c00d48b9d9349b',
+      modelPath:
+          'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/tripo_pbr_model_e534e2f0-618d-44d7-afea-a541fdd1d01a.glb?auth_key=1739664000-qaTCDmwd-0-5e78ed534d85d51df2384865ed2c9e21',
+    )
+  ];
+
+  @override
+  void initState() async {
+    super.initState();
+    // 从本地获取 _resultList
+    // final prefs = await SharedPreferences.getInstance();
+    // _resultList = prefs
+    //         .getStringList('resultList')
+    //         ?.map((e) => Result.fromJson(e))
+    //         .toList() ??
+    //     [];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('欢迎来到首页'),
-          ElevatedButton(
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('欢迎来到 Magic 3D'),
+        Container(
+          padding: const EdgeInsets.all(16.0),
+          child: ElevatedButton(
             onPressed: () {
               _showCamera(context);
             },
-            child: const Text('点击调起摄像头'),
+            child: const Text('上传图片'),
           ),
-        ],
-      ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: _resultList.length,
+            itemBuilder: (context, index) {
+              final result = _resultList[index];
+              return ListTile(
+                leading: Image.network(
+                  result.imagePath,
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.cover,
+                ),
+                title: Text('图片 ${index + 1}'),
+                subtitle: Text('上传时间: ${DateTime.now().toString()}'),
+                onTap: () => _openResultPage(context, _resultList[index]),
+              );
+            },
+          ),
+        )
+      ],
     );
   }
 
@@ -102,12 +145,24 @@ class _HomePageState extends State<HomePage> {
       modelPath: finalModelPath ?? '',
     );
     logger.i('上传成功: $finalResult');
+    // setState(() async {
+    //   _resultList.add(finalResult);
+    //   // 设置 _resultList 到本地
+    //   final prefs = await SharedPreferences.getInstance();
+    //   prefs.setStringList(
+    //       'resultList', _resultList.map((e) => e.toJson()).toList());
+    // });
 
+    // ignore: use_build_context_synchronously
+    _openResultPage(context, finalResult);
+  }
+
+  void _openResultPage(BuildContext context, Result result) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) => ResultPage(
-          result: finalResult,
+          result: result,
         ),
       ),
     );
