@@ -139,21 +139,17 @@ Future<TaskResult> fetchTaskStatus(String taskId) async {
 
 Future<File?> downloadFile(String url) async {
   try {
-    final directory = await getExternalStorageDirectory();
-    if (directory == null) {
-      throw Exception('Failed to get external storage directory');
-    }
-    // 下载文件
     final response = await http.get(Uri.parse(url));
-    if (response.statusCode != 200) {
-      throw Exception('Failed to download file');
+    if (response.statusCode == 200) {
+      final appDir = await getApplicationDocumentsDirectory();
+      final fileName = url.split('/').last;
+      final file = File('${appDir.path}/$fileName');
+      await file.writeAsBytes(response.bodyBytes);
+      logger.i('模型下载完成: ${file.path}');
+      return file;
+    } else {
+      logger.e('下载失败: ${response.statusCode}');
     }
-
-    // 保存文件到临时目录
-    final fileName = url.split('/').last;
-    final file = File('${directory.path}/$fileName');
-    await file.writeAsBytes(response.bodyBytes);
-    return file;
   } catch (e) {
     logger.e('下载文件失败: $e');
   }
