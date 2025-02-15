@@ -43,10 +43,10 @@ class AppContent extends StatefulWidget {
 }
 
 class _AppContentState extends State<AppContent> {
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   final List<TabItem> _tabs = [
-    TabItem(title: '首页', icon: Icons.home, body: const HomePage()),
+    TabItem(title: 'Magic 3D', icon: Icons.home, body: const HomePage()),
     TabItem(
         title: '百度',
         icon: Icons.web,
@@ -60,20 +60,20 @@ class _AppContentState extends State<AppContent> {
         title: Text(_tabs[_currentIndex].title),
       ),
       body: _tabs[_currentIndex].body,
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: _tabs
-            .map((tab) => BottomNavigationBarItem(
-                  icon: Icon(tab.icon),
-                  label: tab.title,
-                ))
-            .toList(),
-      ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   currentIndex: _currentIndex,
+      //   onTap: (index) {
+      //     setState(() {
+      //       _currentIndex = index;
+      //     });
+      //   },
+      //   items: _tabs
+      //       .map((tab) => BottomNavigationBarItem(
+      //             icon: Icon(tab.icon),
+      //             label: tab.title,
+      //           ))
+      //       .toList(),
+      // ),
     );
   }
 }

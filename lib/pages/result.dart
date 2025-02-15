@@ -3,12 +3,25 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:model_viewer_plus/model_viewer_plus.dart';
 import 'package:web_app/utils/logger.dart';
 
+part 'result.g.dart';
+
 @JsonSerializable()
 class Result {
+  final String id;
   final String imagePath;
   final String modelPath;
+  String? modelLocalPath;
 
-  Result({required this.imagePath, required this.modelPath});
+  Result({
+    required this.id,
+    required this.imagePath,
+    required this.modelPath,
+    this.modelLocalPath,
+  });
+
+  factory Result.fromJson(Map<String, dynamic> json) => _$ResultFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ResultToJson(this);
 }
 
 class ResultPage extends StatelessWidget {

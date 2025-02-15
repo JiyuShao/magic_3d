@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
-// import 'package:web_app/utils/upload_oss.dart';
 import 'package:web_app/utils/logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
@@ -138,10 +137,12 @@ Future<TaskResult> fetchTaskStatus(String taskId) async {
   }
 }
 
-Future<String?> downloadAndUploadToAliyun({
-  required String url,
-}) async {
+Future<File?> downloadFile(String url) async {
   try {
+    final directory = await getExternalStorageDirectory();
+    if (directory == null) {
+      throw Exception('Failed to get external storage directory');
+    }
     // 下载文件
     final response = await http.get(Uri.parse(url));
     if (response.statusCode != 200) {
@@ -149,11 +150,24 @@ Future<String?> downloadAndUploadToAliyun({
     }
 
     // 保存文件到临时目录
-    final directory = await getTemporaryDirectory();
     final fileName = url.split('/').last;
     final file = File('${directory.path}/$fileName');
     await file.writeAsBytes(response.bodyBytes);
+    return file;
+  } catch (e) {
+    logger.e('下载文件失败: $e');
+  }
+  return null;
+}
 
+Future<String?> downloadAndUploadToAliyun({
+  required String url,
+}) async {
+  try {
+    final file = await downloadFile(url);
+    if (file == null) {
+      return null;
+    }
     // 上传文件到阿里云
     final finalUrl = url;
     file.delete();
