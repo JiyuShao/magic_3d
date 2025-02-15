@@ -131,7 +131,7 @@ class CardGridItem extends StatelessWidget {
           ),
           // 按钮区域
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -141,15 +141,10 @@ class CardGridItem extends StatelessWidget {
                     onPressed: onDownload,
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.download, size: 18),
-                        SizedBox(width: 2),
-                        Text('下载'),
-                      ],
-                    ),
+                    child: const Icon(Icons.download, size: 20),
                   ),
                 ),
                 // 分隔线
@@ -164,15 +159,10 @@ class CardGridItem extends StatelessWidget {
                     onPressed: () => _showDeleteDialog(context),
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.red,
+                      minimumSize: Size.zero,
+                      padding: EdgeInsets.zero,
                     ),
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.delete_outline, size: 18),
-                        SizedBox(width: 2),
-                        Text('删除'),
-                      ],
-                    ),
+                    child: const Icon(Icons.delete_outline, size: 20),
                   ),
                 ),
               ],
