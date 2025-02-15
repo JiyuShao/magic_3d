@@ -4,10 +4,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_app/pages/result.dart';
 import 'package:web_app/utils/logger.dart';
@@ -118,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(12),
                 onTap: () => _showCamera(context),
                 child: Center(
-                  child: Container(
+                  child: SizedBox(
                     width: 64,
                     height: 64,
                     // 这里预留放置相机图标的位置
@@ -185,18 +184,21 @@ class _HomePageState extends State<HomePage> {
 
   void _showCamera(BuildContext context) async {
     Result result;
-    if (false) {
+    if (true) {
       // 选择图片
       final picker = ImagePicker();
       final image = await picker.pickImage(source: ImageSource.camera);
       if (image == null) {
         return;
       }
+      EasyLoading.show(status: '上传图片中...');
       // 上传图片
       final imageToken = await upload(File(image.path));
       if (imageToken == null) {
+        EasyLoading.showError('上传图片失败');
         return;
       }
+      EasyLoading.show(status: '创建任务中...');
       // 创建任务
       final taskIdResult = await request(
         'POST',
@@ -211,12 +213,15 @@ class _HomePageState extends State<HomePage> {
       );
 
       if (taskIdResult == null) {
+        EasyLoading.showError('创建任务失败');
         return;
       }
+      EasyLoading.show(status: '轮询任务中...');
       final taskId = taskIdResult['task_id'];
       // 轮询任务状态
       final taskResult = await startTaskPolling(taskId);
       if (taskResult == null) {
+        EasyLoading.showError('轮询任务失败');
         return;
       }
       logger.i(taskResult);
@@ -264,6 +269,7 @@ class _HomePageState extends State<HomePage> {
       });
     });
 
+    EasyLoading.dismiss();
     // ignore: use_build_context_synchronously
     _openResultPage(context, finalResult);
   }
