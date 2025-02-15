@@ -24,6 +24,7 @@ dependencies:
   dio: ^5.8.0+1
   shared_preferences: ^2.5.2
   json_annotation: ^4.9.0
+  open_file: ^3.3.2
 
 dev_dependencies:
   flutter_test:
@@ -36,3 +37,5 @@ flutter:
   uses-material-design: true
   assets:
     - .env
+    - assets/logo1.png
+    - assets/logo2.png

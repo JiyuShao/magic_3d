@@ -10,18 +10,92 @@
 import 'package:flutter/material.dart';
 
 class CardGridItem extends StatelessWidget {
-  final String title;
-  final String? subtitle;
   final String imageUrl;
-  final VoidCallback? onViewPressed;
+  final VoidCallback onImageTap;
+  final VoidCallback onDownload;
+  final VoidCallback onDelete;
 
   const CardGridItem({
     Key? key,
-    required this.title,
-    this.subtitle,
     required this.imageUrl,
-    this.onViewPressed,
+    required this.onImageTap,
+    required this.onDownload,
+    required this.onDelete,
   }) : super(key: key);
+
+  void _showDeleteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        contentPadding: const EdgeInsets.fromLTRB(24, 20, 24, 12),
+        content: const Text(
+          '是否删除该模型？',
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        actionsPadding: const EdgeInsets.only(bottom: 12, right: 12, left: 12),
+        actions: [
+          SizedBox(
+            width: double.infinity,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.grey[100],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: Text(
+                      '取消',
+                      style: TextStyle(
+                        color: Colors.grey[800],
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      onDelete();
+                    },
+                    style: TextButton.styleFrom(
+                      backgroundColor: Colors.red[50],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Text(
+                      '删除',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,58 +112,55 @@ class CardGridItem extends StatelessWidget {
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 图片区域
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
+          // 缩略图区域
+          Expanded(
+            child: GestureDetector(
+              onTap: onImageTap,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(12)),
+                  image: DecorationImage(
+                    image: NetworkImage(imageUrl),
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ),
             ),
           ),
-          // 内容区域
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          // 按钮区域
+          Container(
+            padding: const EdgeInsets.all(8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                // 下载按钮
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: onDownload,
+                    icon: const Icon(Icons.download, size: 20),
+                    label: const Text('下载'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                if (subtitle != null) ...[
-                  const SizedBox(height: 4),
-                  Text(
-                    subtitle!,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
+                // 分隔线
+                Container(
+                  height: 20,
+                  width: 1,
+                  color: Colors.grey[300],
+                ),
+                // 删除按钮
+                Expanded(
+                  child: TextButton.icon(
+                    onPressed: () => _showDeleteDialog(context),
+                    icon: const Icon(Icons.delete_outline, size: 20),
+                    label: const Text('删除'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.red,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: onViewPressed,
-                    style: ElevatedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                    ),
-                    child: const Text('查看'),
                   ),
                 ),
               ],
