@@ -38,7 +38,7 @@ class ResultPage extends StatelessWidget {
       ),
       body: Center(
         child: ModelViewer(
-          backgroundColor: const Color.fromARGB(0xFF, 0xEE, 0xEE, 0xEE),
+          backgroundColor: const Color(0xFFF5F3FF),
           src: result.modelPath,
           alt: 'A 3D model',
           ar: true,
