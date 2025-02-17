@@ -81,14 +81,18 @@ Future<Map<String, dynamic>?> request(String method, String url,
   return null;
 }
 
-Future<Map<String, dynamic>?> startTaskPolling(String taskId, Function callback) async {
+Future<Map<String, dynamic>?> startTaskPolling(
+    String taskId, Function callback) async {
   while (true) {
     try {
       var taskResult = await fetchTaskStatus(taskId);
+      if (taskResult.status == 'pending' || taskResult.status == 'success') {
+        logger.i('任务进行中: ${taskResult.data!['progress']}%');
+        callback(taskResult.data!['progress']);
+      }
       if (taskResult.status == 'success' || taskResult.status == 'error') {
         return taskResult.data;
       }
-      callback(taskResult.data?['progress'] ?? 0);
       await Future.delayed(const Duration(seconds: 5)); // 等待 5 秒
     } catch (e) {
       logger.e('任务状态查询失败：${e.toString()}');
@@ -113,14 +117,14 @@ Future<TaskResult> fetchTaskStatus(String taskId) async {
     if (taskResult == null) {
       return TaskResult(
         status: 'error',
-        data: null,
+        data: {'progress': 100},
         message: '任务状态查询失败',
       );
     }
     if (taskResult['progress'] != 100) {
       return TaskResult(
         status: 'pending',
-        data: null,
+        data: taskResult,
         message: '任务进行中',
       );
     }

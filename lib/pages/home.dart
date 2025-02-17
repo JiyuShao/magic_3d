@@ -249,7 +249,7 @@ class _HomePageState extends State<HomePage> {
         EasyLoading.showError('生成失败');
         return;
       }
-      logger.i(taskResult);
+      logger.i("生成结果: $taskResult");
 
       // 下载模型
       // final modelUrl = taskResult['model_url'];
