@@ -81,13 +81,14 @@ Future<Map<String, dynamic>?> request(String method, String url,
   return null;
 }
 
-Future<Map<String, dynamic>?> startTaskPolling(String taskId) async {
+Future<Map<String, dynamic>?> startTaskPolling(String taskId, Function callback) async {
   while (true) {
     try {
       var taskResult = await fetchTaskStatus(taskId);
       if (taskResult.status == 'success' || taskResult.status == 'error') {
         return taskResult.data;
       }
+      callback(taskResult.data?['progress'] ?? 0);
       await Future.delayed(const Duration(seconds: 5)); // 等待 5 秒
     } catch (e) {
       logger.e('任务状态查询失败：${e.toString()}');

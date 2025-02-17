@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_app/pages/result.dart';
+import 'package:web_app/utils/compress.dart';
 import 'package:web_app/utils/logger.dart';
 import 'package:web_app/utils/request.dart';
 import 'package:web_app/components/list.dart';
@@ -206,9 +207,16 @@ class _HomePageState extends State<HomePage> {
       if (image == null) {
         return;
       }
+
+      EasyLoading.show(status: '压缩图片中...');
+      final imageFile = File(image.path);
+      logger.d("图片压缩前：${imageFile.lengthSync() / 1024} KB");
+      final compressedImageFile = await compressImage(imageFile);
+      logger.d("压缩图片后：${compressedImageFile.lengthSync() / 1024} KB");
+
       EasyLoading.show(status: '上传图片中...');
       // 上传图片
-      final imageToken = await upload(File(image.path));
+      final imageToken = await upload(compressedImageFile);
       if (imageToken == null) {
         EasyLoading.showError('上传图片失败');
         return;
@@ -234,7 +242,9 @@ class _HomePageState extends State<HomePage> {
       EasyLoading.show(status: '生成中...');
       final taskId = taskIdResult['task_id'];
       // 轮询任务状态
-      final taskResult = await startTaskPolling(taskId);
+      final taskResult = await startTaskPolling(taskId, (progress) {
+        EasyLoading.show(status: '生成中($progress%)...');
+      });
       if (taskResult == null) {
         EasyLoading.showError('生成失败');
         return;
