@@ -22,6 +22,11 @@ class Result {
   factory Result.fromJson(Map<String, dynamic> json) => _$ResultFromJson(json);
 
   Map<String, dynamic> toJson() => _$ResultToJson(this);
+
+  @override
+  String toString() {
+    return 'Result(id: $id, imagePath: $imagePath, modelPath: $modelPath, modelLocalPath: $modelLocalPath)';
+  }
 }
 
 class ResultPage extends StatelessWidget {

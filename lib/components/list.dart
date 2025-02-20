@@ -12,14 +12,14 @@ import 'package:flutter/material.dart';
 class CardGridItem extends StatelessWidget {
   final String imageUrl;
   final VoidCallback onImageTap;
-  final VoidCallback onDownload;
+  final VoidCallback onCopy;
   final VoidCallback onDelete;
 
   const CardGridItem({
     Key? key,
     required this.imageUrl,
     required this.onImageTap,
-    required this.onDownload,
+    required this.onCopy,
     required this.onDelete,
   }) : super(key: key);
 
@@ -138,13 +138,13 @@ class CardGridItem extends StatelessWidget {
                 // 下载按钮
                 Expanded(
                   child: TextButton(
-                    onPressed: onDownload,
+                    onPressed: onCopy,
                     style: TextButton.styleFrom(
                       foregroundColor: Colors.blue,
                       minimumSize: Size.zero,
                       padding: EdgeInsets.zero,
                     ),
-                    child: const Icon(Icons.download, size: 20),
+                    child: const Icon(Icons.copy, size: 20),
                   ),
                 ),
                 // 分隔线

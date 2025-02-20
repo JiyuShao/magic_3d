@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
+import 'package:web_app/utils/aliyun_oss.dart';
 import 'package:web_app/utils/logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
@@ -170,9 +172,21 @@ Future<String?> downloadAndUploadToAliyun({
       return null;
     }
     // 上传文件到阿里云
-    final finalUrl = url;
+    final aliyunOss = AliyunOSS(
+      accessKeyId: dotenv.env['OSS_ACCESS_KEY_ID'] ?? '',
+      accessKeySecret: dotenv.env['OSS_ACCESS_KEY_SECRET'] ?? '',
+      endpoint: dotenv.env['OSS_ENDPOINT'] ?? '',
+      bucket: dotenv.env['OSS_BUCKET'] ?? '',
+    );
+    String dateTime = DateTime.now().microsecondsSinceEpoch.toString();
+    String fileName = url.split('?')[0].split('/').last;
+    String fileNameHash = md5.convert(utf8.encode(fileName)).toString();
+    String fileExtension = fileName.split('.').last;
+    String finalUrl = await aliyunOss.uploadFile(
+      file,
+      "magic-3d/${dateTime}_$fileNameHash.$fileExtension",
+    );
     file.delete();
-    // final finalUrl = await UploadOss.upload(file);
     logger.d('上传文件到阿里云成功: $finalUrl');
     return finalUrl;
   } catch (e) {

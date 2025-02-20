@@ -24,6 +24,8 @@ dependencies:
   open_file: ^3.3.2
   flutter_easyloading: ^3.0.5
   flutter_image_compress: ^2.4.0
+  dio: ^5.8.0+1
+  crypto: ^3.0.6
 
 dev_dependencies:
   flutter_test:

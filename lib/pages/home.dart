@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
@@ -170,9 +171,11 @@ class _HomePageState extends State<HomePage> {
                     return CardGridItem(
                       imageUrl: result.imagePath,
                       onImageTap: () => _openResultPage(context, result),
-                      onDownload: () async {
-                        logger.i('开始下载模型: ${result.modelPath}');
-                        _downloadTaskModel(result);
+                      onCopy: () async {
+                        logger.i('复制模型: ${result.modelPath}');
+                        await Clipboard.setData(
+                            ClipboardData(text: result.modelPath));
+                        EasyLoading.showSuccess('模型在线地址已复制到剪贴板');
                       },
                       onDelete: () {
                         setState(() {
@@ -266,9 +269,9 @@ class _HomePageState extends State<HomePage> {
       result = Result(
         id: '123',
         imagePath:
-            'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/rendered_image.webp?auth_key=1739664000-qaTCDmwd-0-3afea8374cdd656c00c00d48b9d9349b',
+            'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250220/a34c7636-658e-4e44-9306-1143ca115aac/rendered_image.webp?auth_key=1740096000-8ebSgS9r-0-5a696a9108a8509a5755a5832bf12825',
         modelPath:
-            'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250215/e534e2f0-618d-44d7-afea-a541fdd1d01a/tripo_pbr_model_e534e2f0-618d-44d7-afea-a541fdd1d01a.glb?auth_key=1739664000-qaTCDmwd-0-5e78ed534d85d51df2384865ed2c9e21',
+            'https://tripo-data.cdn.bcebos.com/tcli_9eb8f06d07484b65b1be273e91e17f63/20250220/a34c7636-658e-4e44-9306-1143ca115aac/tripo_pbr_model_a34c7636-658e-4e44-9306-1143ca115aac.glb?auth_key=1740096000-8ebSgS9r-0-282dac1b46c1ec04bc0acc67f0f5ea20',
       );
     }
 
