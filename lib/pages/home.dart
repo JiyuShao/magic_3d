@@ -9,11 +9,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:open_file/open_file.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:web_app/pages/result.dart';
-import 'package:web_app/utils/compress.dart';
-import 'package:web_app/utils/logger.dart';
-import 'package:web_app/utils/request.dart';
-import 'package:web_app/components/list.dart';
+import 'package:magic_3d/pages/result.dart';
+import 'package:magic_3d/utils/compress.dart';
+import 'package:magic_3d/utils/logger.dart';
+import 'package:magic_3d/utils/request.dart';
+import 'package:magic_3d/components/list.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

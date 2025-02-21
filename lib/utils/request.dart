@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart' as p;
-import 'package:web_app/utils/aliyun_oss.dart';
-import 'package:web_app/utils/logger.dart';
+import 'package:magic_3d/utils/aliyun_oss.dart';
+import 'package:magic_3d/utils/logger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:path_provider/path_provider.dart';
 

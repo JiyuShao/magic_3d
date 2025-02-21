@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:web_app/pages/home.dart';
-import 'package:web_app/pages/webview.dart';
+import 'package:magic_3d/pages/home.dart';
+import 'package:magic_3d/pages/webview.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:web_app/utils/logger.dart';
+import 'package:magic_3d/utils/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

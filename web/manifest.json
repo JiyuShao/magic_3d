@@ -1,6 +1,6 @@
 {
-    "name": "web_app",
-    "short_name": "web_app",
+    "name": "magic_3d",
+    "short_name": "magic_3d",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
